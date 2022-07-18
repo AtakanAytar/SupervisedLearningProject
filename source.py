@@ -1,11 +1,14 @@
-
+#%%
+from os import path
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 #%%
 # LOADING DATA
-df_ksi = pd.read_csv ("./KSI.csv")
+data_filename = path.join('.', "KSI.csv")
+output_dir = path.join('.', "output")
+df_ksi = pd.read_csv(data_filename)
 #%%
 
 print("First three records")
@@ -36,6 +39,7 @@ plt.title("Coords of Accidents")
 plt.xlabel("X")
 plt.ylabel("Y")
 plt.show()
+plt.savefig(path.join(output_dir, 'scatter-coords-of-accidents.png'))
 
 #%%
 
