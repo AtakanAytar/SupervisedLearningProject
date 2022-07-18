@@ -33,6 +33,11 @@ print(df_ksi.info())
 
 #%%
 
+df_ksi["ocean_proximity"].unique()
+df_ksi["ocean_proximity"].value_counts()
+
+#%%
+
 #See coords of the accidents
 df_ksi.plot(kind="scatter", x="X", y="Y", alpha=.1)
 plt.title("Coords of Accidents")
@@ -82,3 +87,7 @@ plt.show()
 #%%
 
 
+# CHECK FOR MISSING VALUES
+missing_rows = df_ksi[df_ksi.isnull().any(axis=1)]
+print (len(missing_rows))
+#%%
