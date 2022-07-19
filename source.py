@@ -28,13 +28,15 @@ print(df_ksi.dtypes)
 print("Col Names")
 print(df_ksi.columns.values)
 
+
+
 print("Non null count")
 print(df_ksi.info())
 
 #%%
 
-df_ksi["ocean_proximity"].unique()
-df_ksi["ocean_proximity"].value_counts()
+#df_ksi["ocean_proximity"].unique()
+#df_ksi["ocean_proximity"].value_counts()
 
 #%%
 
@@ -91,3 +93,15 @@ plt.show()
 missing_rows = df_ksi[df_ksi.isnull().any(axis=1)]
 print (len(missing_rows))
 #%%
+
+df_fatal = df_ksi["ACCLASS"]
+df_ksi.drop(["ObjectId","ACCNUM","OFFSET","ACCLOC","ACCLASS"], axis=1, inplace=True)
+
+for col in df_ksi.columns:
+    df_ksi[col].replace(['<Null>', np.nan], inplace=True)
+    
+
+
+print(df_ksi.isna().sum())
+
+print(df_ksi)
