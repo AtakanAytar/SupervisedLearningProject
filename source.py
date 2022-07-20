@@ -181,3 +181,6 @@ pipeline = Pipeline(
 
 pipeline.fit(dfksi_train_X, dfksi_train_y)
 print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
+
+
+
