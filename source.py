@@ -15,28 +15,19 @@ print("First three records")
 print(df_ksi.head(3))
 #%%
 
-
 print("Statistics")
 print(df_ksi.describe())
 #%%
-
-print("Dimentions")
+print("Dimensions")
 print(df_ksi.shape)
 print("Types")
 print(df_ksi.dtypes)
-
 print("Col Names")
 print(df_ksi.columns.values)
-
-
-
 print("Non null count")
 print(df_ksi.info())
 
 #%%
-
-#df_ksi["ocean_proximity"].unique()
-#df_ksi["ocean_proximity"].value_counts()
 
 #%%
 
@@ -94,14 +85,31 @@ missing_rows = df_ksi[df_ksi.isnull().any(axis=1)]
 print (len(missing_rows))
 #%%
 
+df_ksi.replace("<Null>",np.nan,inplace=True)
+
 df_fatal = df_ksi["ACCLASS"]
-df_ksi.drop(["ObjectId","ACCNUM","OFFSET","ACCLOC","ACCLASS"], axis=1, inplace=True)
+num_nan = list([df_ksi.columns,df_ksi.isna().sum()])
+print(num_nan)
 
-for col in df_ksi.columns:
-    df_ksi[col].replace(['<Null>', np.nan], inplace=True)
-    
+max_number_of_nas = 8000
 
+df = df_ksi.loc[:, (df_ksi.isnull().sum(axis=0) <= max_number_of_nas)]
+col_removed =  df_ksi.loc[:, (df_ksi.isnull().sum(axis=0) >= max_number_of_nas)]
+print(col_removed.columns)
+print(df)
 
-print(df_ksi.isna().sum())
+df_fatal = df_ksi["ACCLASS"]
 
+df.drop(["ObjectId","X","Y","INDEX_","ACCNUM","TIME","DISTRICT","POLICE_DIVISION","NEIGHBOURHOOD","ACCLASS"], axis=1, inplace=True)
+print(df)
 print(df_ksi)
+
+# %%
+
+#Graph
+sns.set()
+plt.figure()
+
+ax = sns.barplot(data=df, x="YEAR", y="DATE",  palette=['blue', 'red', 'yellow', 'grey'], saturation=0.6)
+
+plt.show()
