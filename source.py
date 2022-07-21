@@ -1,3 +1,4 @@
+#%%
 from enum import auto
 import numpy as np
 import matplotlib as mpl
@@ -6,9 +7,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 
-import os
-import tarfile
-import urllib
+from os import path
 import numpy as np
 import pandas as pd
 from pandas.plotting import scatter_matrix
@@ -16,19 +15,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import StratifiedShuffleSplit
 
-
+#%%
 # DATA LOAD
-df_ksi = pd.read_csv ("./KSI.csv")
+data_filename = path.join('.', "KSI.csv")
+df_ksi = pd.read_csv (data_filename)
 
+#%%
 
 ## DATA EXPLORATION
+# initial data exploration
 print("First three records")
 print(df_ksi.head(3))
-
-
+#%%
 print("Statistics")
 print(df_ksi.describe())
 #%%
+
 print("Dimensions")
 print(df_ksi.shape)
 print("Types")
