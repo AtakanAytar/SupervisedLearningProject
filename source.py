@@ -117,8 +117,8 @@ plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
 plt.show()
 
 # See pairplot
-sns.pairplot(df_ksi)
-plt.show()
+#sns.pairplot(df_ksi)
+#plt.show()
 
 # histogram of all the numerical columns
 df_ksi.hist(bins=50, figsize=(20,15))
@@ -156,7 +156,7 @@ ax1.set_ylabel('Traffic Control Type', size=16)
 ax1.axis('equal') 
 plt.show()
 ## End of Data exploration
-
+#%%
 
 ## FEATURE SELECTION
 #####################
@@ -181,7 +181,7 @@ dfksi_main = dfksi_main.dropna()
 
 # no more missing values
 dfksi_main.isnull().sum()
-
+#%%
 
 # DATA SPLIT
 ############
@@ -212,7 +212,7 @@ print("train X shape:", dfksi_train_X.shape)
 print("train y shape:", dfksi_train_y.shape)
 print("test X shape:", dfksi_test_X.shape)
 print("test y shape:", dfksi_test_y.shape)
-
+#%%
 # this is a copy for visualation if we need.
 # simply glued the feature and target together
 dfksi_training = dfksi_train_X.copy()
@@ -352,7 +352,8 @@ print("Neural Network Model")
 from sklearn.neural_network import MLPClassifier
 mlp = MLPClassifier(random_state=123)
 pipe = Pipeline(steps=[('pre',pre_processor),('mlpc', mlp)])
-
+pipe.fit(dfksi_train_X, dfksi_train_y)
+#%%
 #GridSearch
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
@@ -365,7 +366,7 @@ def scoremodel(model):
     print("Accuracy Matrix: " , confusion_matrix(dfksi_test_y, y_pred))
     print("Best Parameters: " ,model.best_params_)
     print("Best Score: " ,model.best_score_)
-    
+#%%  
 param_grid = {
             'mlpc__max_iter': [500,600],
             'mlpc__hidden_layer_sizes': [(8,4,2),(4,2,1)],
@@ -378,19 +379,22 @@ param_grid = {
 rnd_grid = RandomizedSearchCV(estimator=pipe, param_distributions= param_grid, cv=3,n_jobs = -1,n_iter=10)
 rnd_result = rnd_grid.fit(dfksi_train_X,dfksi_train_y)
 scoremodel(rnd_grid)
+#%%
+param_grid = {
+            'mlpc__max_iter': [600],
+            'mlpc__hidden_layer_sizes': [(8,6,1),(4,2,1)],
+            'mlpc__activation': ['tanh'],
+            'mlpc__solver': ['adam'],
+            'mlpc__alpha': [0.001, 0.01],
+            'mlpc__learning_rate': ['constant','adaptive'],
+}
 
-best_params = [
-    {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (8, 4, 2), 'mlpc__learning_rate': 'constant', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
-    {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (4, 2, 1), 'mlpc__learning_rate': 'constant', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
-    {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (8, 4, 2), 'mlpc__learning_rate': 'adaptive', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
-    {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (4, 2, 1), 'mlpc__learning_rate': 'adaptive', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'}
-    ]
 #5 minutes
 grid = GridSearchCV(estimator=pipe, param_grid=param_grid, cv=3, n_jobs = -1,scoring="accuracy",refit=True)
 grid_result = grid.fit(dfksi_train_X,dfksi_train_y)
 y_pred = grid_result.predict(dfksi_test_X)
 scoremodel(grid_result)
-
+#%%
 #Graph
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn import metrics
@@ -404,3 +408,4 @@ display = metrics.RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
                                estimator_name='Neural Network')
 display.plot()
 plt.show()
+#%%

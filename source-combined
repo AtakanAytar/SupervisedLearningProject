@@ -173,9 +173,11 @@ columns_selected = ["HOUR", "TIME", "STREET1", "DISTRICT", "TRAFFCTL", "VISIBILI
 output_column = "ACCLASS"
 dfksi_main = df_ksi[columns_selected]
 dfksi_main.info()
-
+df_ksi_2 = df_ksi.replace("<Null>", np.nan)
+df_ksi_2
+#%%
 # recheck the missing values
-dfksi_main.isnull().sum()
+df_ksi_2.isnull().sum()
 
 # any rows with missing values left with features selected
 dfksi_main[dfksi_main.isnull().any(axis=1)]
