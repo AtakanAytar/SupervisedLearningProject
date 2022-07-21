@@ -60,8 +60,33 @@ plt.xlabel("DISTRICT")
 plt.ylabel("freqeuncy")
 plt.show()
 
+df_ksi["ROAD_CLASS"].hist(bins=30, figsize=(25,15))
+plt.xlabel("ROAD_CLASS")
+plt.ylabel("freqeuncy")
+plt.show()
+
+df_ksi["ACCLOC"].hist(bins=30, figsize=(25,15))
+plt.xlabel("ACCLOC")
+plt.ylabel("freqeuncy")
+plt.show()
+
+df_ksi["TRAFFCTL"].hist(bins=30, figsize=(25,15))
+plt.xlabel("TRAFFCTL")
+plt.ylabel("freqeuncy")
+plt.show()
+
+df_ksi["VISIBILITY"].hist(bins=30, figsize=(25,15))
+plt.xlabel("VISIBILITY")
+plt.ylabel("freqeuncy")
+plt.show()
+
 df_ksi["LIGHT"].hist(bins=30, figsize=(25,15))
 plt.xlabel("LIGHT")
+plt.ylabel("freqeuncy")
+plt.show()
+
+df_ksi["RDSFCOND"].hist(bins=30, figsize=(25,15))
+plt.xlabel("RDSFCOND")
 plt.ylabel("freqeuncy")
 plt.show()
 
@@ -70,17 +95,74 @@ plt.xlabel("ALCOHOL")
 plt.ylabel("freqeuncy")
 plt.show()
 
-df_ksi["VEHTYPE"].hist(bins=40, figsize=(25,15))
-plt.xlabel("VEHTYPE")
+df_ksi["ACCLASS"].hist(bins=30, figsize=(25,15))
+plt.xlabel("ACCLASS")
 plt.ylabel("freqeuncy")
 plt.show()
 
+df_ksi["IMPACTYPE"].hist(bins=40, figsize=(25,15))
+plt.xlabel("IMPACTYPE")
+plt.ylabel("freqeuncy")
+plt.show()
+
+ax= plt.subplot()
+df_ksi["INVTYPE"].hist(bins=30, figsize=(25,15))
+plt.xlabel("INVTYPE")
+plt.ylabel("freqeuncy")
+plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
+plt.show()
+
+df_ksi["INVAGE"].hist(bins=50, figsize=(25,15))
+plt.xlabel("INVAGE")
+plt.ylabel("freqeuncy")
+plt.show()
+
+ax= plt.subplot()
+df_ksi["VEHTYPE"].hist(bins=40, figsize=(25,15))
+plt.xlabel("VEHTYPE")
+plt.ylabel("freqeuncy")
+plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right')
+plt.show()
+
+
 #See pairplot
-#sns.pairplot(df_ksi)
-#plt.show()
+sns.pairplot(df_ksi)
+plt.show()
 
 #histogram of all the numerical columns
 df_ksi.hist(bins=50, figsize=(20,15))
+plt.show()
+
+# Pie chart
+fig1, ax1 = plt.subplots()
+explode = [0,0.1,0]
+df_ksi.groupby('ACCLASS').size().plot(kind='pie', explode=explode, autopct='%.2f%%', ax=ax1)
+ax1.set_ylabel('Accident Class', size=16)
+ax1.axis('equal') 
+plt.show()
+
+fig1, ax1 = plt.subplots()
+df_ksi.groupby('IMPACTYPE').size().plot(kind='pie', autopct='%.2f%%', ax=ax1)
+ax1.set_ylabel('Impact Type', size=22)
+ax1.axis('equal') 
+plt.show()
+
+fig1, ax1 = plt.subplots()
+df_ksi.groupby('DISTRICT').size().plot(kind='pie', autopct='%.2f%%', ax=ax1)
+ax1.set_ylabel('District', size=16)
+ax1.axis('equal') 
+plt.show()
+
+fig1, ax1 = plt.subplots()
+df_ksi.groupby('ACCLOC').size().plot(kind='pie', autopct='%.2f%%', ax=ax1)
+ax1.set_ylabel('Collision Location', size=16)
+ax1.axis('equal') 
+plt.show()
+
+fig1, ax1 = plt.subplots()
+df_ksi.groupby('TRAFFCTL').size().plot(kind='pie', autopct='%.2f%%', ax=ax1)
+ax1.set_ylabel('Traffic Control Type', size=16)
+ax1.axis('equal') 
 plt.show()
 
 
@@ -176,16 +258,26 @@ pipeline = Pipeline(
     steps=[("preprocessor", pre_processor), ("classifier", LogisticRegression())]
 )
 
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-
 pipeline.fit(dfksi_train_X, dfksi_train_y)
 print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
 
+#SVM
+from sklearn.svm import SVC
+
+for k in ['linear', 'rbf', 'poly', 'sigmoid']:
+    pipeline2 = Pipeline(
+        steps=[("preprocessor", pre_processor), 
+               ("classifier", SVC(kernel=k, gamma='auto'))]
+    )
+    
+    pipeline2.fit(dfksi_train_X, dfksi_train_y)
+    print(k)
+    print("SVM model score: %.3f" % pipeline2.score(dfksi_test_X, dfksi_test_y))
 
 #Neural Network Model
 
 print("Neural Network Model")
-#train_x, test_x,train_y,test_y = train_test_split(dfksi_main_X,dfksi_main_y, test_size=0.2,random_state=RAND_SEED)
+
 RAND_SEED = 123
 SPLIT_SIZE = 0.33  # 20% test
 splitter = StratifiedShuffleSplit(n_splits=3, test_size=SPLIT_SIZE, random_state=RAND_SEED)
@@ -223,17 +315,16 @@ param_grid = {
             'mlpc__learning_rate': ['constant','adaptive'],
 }
 
+rnd_grid = RandomizedSearchCV(estimator=pipe, param_distributions= param_grid, cv=3,n_jobs = -1,n_iter=10)
+rnd_result = rnd_grid.fit(dfksi_train_X,dfksi_train_y)
+scoremodel(rnd_grid)
+
 best_params = [
     {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (8, 4, 2), 'mlpc__learning_rate': 'constant', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
     {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (4, 2, 1), 'mlpc__learning_rate': 'constant', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
     {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (8, 4, 2), 'mlpc__learning_rate': 'adaptive', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'},
     {'mlpc__activation': 'tanh', 'mlpc__alpha': 0.01, 'mlpc__hidden_layer_sizes': (4, 2, 1), 'mlpc__learning_rate': 'adaptive', 'mlpc__max_iter': 600, 'mlpc__solver': 'adam'}
     ]
-
-rnd_grid = RandomizedSearchCV(estimator=pipe, param_distributions= param_grid, cv=3,n_jobs = -1,n_iter=50)
-rnd_result = rnd_grid.fit(dfksi_train_X,dfksi_train_y)
-scoremodel(rnd_grid)
-
 #5 minutes
 grid = GridSearchCV(estimator=pipe, param_grid=param_grid, cv=3, n_jobs = -1,scoring="accuracy",refit=True)
 grid_result = grid.fit(dfksi_train_X,dfksi_train_y)
@@ -242,11 +333,15 @@ scoremodel(grid_result)
 
 #Graph
 from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn import metrics
 from sklearn.metrics import (precision_recall_curve, PrecisionRecallDisplay)
 
 ConfusionMatrixDisplay.from_estimator(grid_result,dfksi_train_X,dfksi_train_y)
 ConfusionMatrixDisplay.from_predictions(y_pred,dfksi_test_y)
 
-# precision, recall, _ = precision_recall_curve(dfksi_test_y["ACCLASS"], y_pred)
-# disp = PrecisionRecallDisplay(precision=precision, recall=recall)
-# disp.plot()
+fpr, tpr, thresholds = metrics.roc_curve(y_pred,dfksi_test_y, y_pred)
+roc_auc = metrics.auc(fpr, tpr)
+display = metrics.RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
+                               estimator_name='Neural Network')
+display.plot()
+plt.show()
