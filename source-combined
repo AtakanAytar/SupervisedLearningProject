@@ -274,20 +274,9 @@ for k in ['linear', 'rbf', 'poly', 'sigmoid']:
     print(k)
     print("SVM model score: %.3f" % pipeline2.score(dfksi_test_X, dfksi_test_y))
 
-#Neural Network Model
+#Neural Network Model - Jamaal Bernabe
 
 print("Neural Network Model")
-
-RAND_SEED = 123
-SPLIT_SIZE = 0.33  # 20% test
-splitter = StratifiedShuffleSplit(n_splits=3, test_size=SPLIT_SIZE, random_state=RAND_SEED)
-
-for train_index, test_index in splitter.split(dfksi_main_X, dfksi_main_y):
-    dfksi_train_X = dfksi_main_X.iloc[train_index]
-    dfksi_train_y = dfksi_main_y.iloc[train_index]
-    dfksi_test_X = dfksi_main_X.iloc[test_index]
-    dfksi_test_y = dfksi_main_y.iloc[test_index]
-
 from sklearn.neural_network import MLPClassifier
 mlp = MLPClassifier(random_state=123)
 
