@@ -457,19 +457,15 @@ print("Random forest model score: %.3f" % pipeline4.score(dfksi_test_X, dfksi_te
 
 #%%
 #End of random forest
-
+#%%
 #Neural Network Model - Jamaal Bernabe
 #import MLP Classifier
 print("Neural Network Model")
 from sklearn.neural_network import MLPClassifier
-mlp = MLPClassifier(random_state=123)
-pipe = Pipeline(steps=[('pre',pre_processor),('mlpc', mlp)])
-pipe.fit(dfksi_train_X, dfksi_train_y)
-#%%
-#GridSearch
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import confusion_matrix
+
 #Function to display metrics easily
 def scoremodel(model):
     print("Training Accuracy: " , model.score(dfksi_train_X,dfksi_train_y))
@@ -478,19 +474,35 @@ def scoremodel(model):
     print("Accuracy Matrix: " , confusion_matrix(dfksi_test_y, y_pred))
     print("Best Parameters: " ,model.best_params_)
     print("Best Score: " ,model.best_score_)
-#%%  
+    # scores = cross_val_score(model, dfksi_train_X, dfksi_train_y, scoring='accuracy', cv=5)
+    # print(k)
+    # print ('Min:')
+    # print (scores.min())
+    # print ('Mean:')
+    # print (scores.mean())
+    # print ('Max:')
+    # print (scores.max())
+
+mlp = MLPClassifier(random_state=123)
+pipe = Pipeline(steps=[('pre',pre_processor),('mlpc', mlp)])
+pipe.fit(dfksi_train_X, dfksi_train_y)
+#%%
+
+    
+#%% 
+# #GridSearch 
 param_grid = {
             'mlpc__max_iter': [500,600],
             'mlpc__hidden_layer_sizes': [(8,4,2),(4,2,1)],
-            'mlpc__activation': ['tanh', 'relu'],
-            'mlpc__solver': ['sgd', 'adam'],
+            'mlpc__activation': ['tanh','relu'],
+            'mlpc__solver': ['adam'],
             'mlpc__alpha': [0.0001,0.001, 0.01],
             'mlpc__learning_rate': ['constant','adaptive'],
 }
 
 rnd_grid = RandomizedSearchCV(estimator=pipe, param_distributions= param_grid, cv=3,n_jobs = -1,n_iter=10)
 rnd_result = rnd_grid.fit(dfksi_train_X,dfksi_train_y)
-scoremodel(rnd_grid)
+scoremodel(rnd_result)
 #%%
 param_grid = {
             'mlpc__max_iter': [600],
