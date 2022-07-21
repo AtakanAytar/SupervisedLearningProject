@@ -22,7 +22,8 @@ df_ksi = pd.read_csv ("./KSI.csv")
 
 
 
-
+## Data Exploration 
+# Atakan Aytar
 print("First three records")
 print(df_ksi.head(3))
 
@@ -82,6 +83,8 @@ plt.show()
 #histogram of all the numerical columns
 df_ksi.hist(bins=50, figsize=(20,15))
 plt.show()
+
+## End of Data exploration
 
 
 
@@ -182,6 +185,7 @@ pipeline = Pipeline(
 pipeline.fit(dfksi_train_X, dfksi_train_y)
 print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
 
+
 ## Decison Trees Model 
 ## Suraj Regmi
 from sklearn.tree import DecisionTreeClassifier
@@ -205,7 +209,6 @@ grid.best_score_
 grid.best_params_
 grid.cv_results_
 
-
 pipeline3 = Pipeline(
     steps=[("preprocessor", pre_processor), 
            ("classifier", DecisionTreeClassifier(criterion="entropy",max_depth=20,random_state=39))]
@@ -215,3 +218,48 @@ print("Decision Tree model score: %.3f" % pipeline3.score(dfksi_test_X, dfksi_te
 
 
 
+
+from sklearn.svm import SVC
+
+pipeline2 = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", SVC(gamma='auto'))]
+)
+pipeline2.fit(dfksi_train_X, dfksi_train_y)
+print("SVM model score: %.3f" % pipeline2.score(dfksi_test_X, dfksi_test_y))
+
+
+
+
+##Random Forest Regression 
+#Atakan Aytar
+
+from sklearn.ensemble import RandomForestClassifier
+# Commented  out since it takes a long time to run Cross validation and started giving errors but ran once before that
+
+# param_grid = { 
+#     'n_estimators': [100, 200],
+#      criterion{“gini”, “entropy”, “log_loss”}
+#     'max_depth' : [4,5,6,None],
+# }
+
+# pipelineForRF = Pipeline(
+    # steps=[("preprocessor", pre_processor), 
+    #        ("classifier", RandomForestClassifier(random_state = 42))]
+# )
+# from sklearn.model_selection import GridSearchCV
+# grid2 = GridSearchCV(pipelineForRF, param_grid)
+# grid2.fit(dfksi_train_X, dfksi_train_y)
+# print(grid2.best_params_)
+
+
+pipeline4 = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", RandomForestClassifier(n_estimators = 100, random_state = 42,max_depth=None,criterion="gini"))]
+)
+
+pipeline4.fit(dfksi_train_X, dfksi_train_y)
+print("Random forest model score: %.3f" % pipeline4.score(dfksi_test_X, dfksi_test_y))
+
+
+#End of random forest
