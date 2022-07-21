@@ -182,5 +182,36 @@ pipeline = Pipeline(
 pipeline.fit(dfksi_train_X, dfksi_train_y)
 print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
 
+## Decison Trees Model 
+## Suraj Regmi
+from sklearn.tree import DecisionTreeClassifier
+
+pipelineForHT = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", DecisionTreeClassifier(random_state=39))]
+)
+
+## hyper parameter tunining 
+param_grid = {
+    "classifier__criterion":["gini","entropy"],
+    "classifier__max_depth":[2,4,8,10,12,14,18,20],
+    }
+
+from sklearn.model_selection import GridSearchCV
+grid = GridSearchCV(pipelineForHT, param_grid)
+grid.fit(dfksi_train_X, dfksi_train_y)
+
+grid.best_score_
+grid.best_params_
+grid.cv_results_
+
+
+pipeline3 = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", DecisionTreeClassifier(criterion="entropy",max_depth=20,random_state=39))]
+)
+pipeline3.fit(dfksi_train_X, dfksi_train_y)
+print("Decision Tree model score: %.3f" % pipeline3.score(dfksi_test_X, dfksi_test_y))
+
 
 
