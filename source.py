@@ -172,15 +172,16 @@ pre_processor = ColumnTransformer(
 )
 
 
-#The Model
+## The Model
+##############
 
+## LOGISTIC REGRESSION
+# Alamin Ahmed
 from sklearn.linear_model import LogisticRegression
 
 pipeline = Pipeline(
     steps=[("preprocessor", pre_processor), ("classifier", LogisticRegression())]
 )
-
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 pipeline.fit(dfksi_train_X, dfksi_train_y)
 print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
