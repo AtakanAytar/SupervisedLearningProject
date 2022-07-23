@@ -427,33 +427,34 @@ for k in ['linear', 'rbf', 'poly', 'sigmoid']:
 #Atakan Aytar
 
 #%%
-
+##### Dont run this cell since its only gridsearch no need to waste time 
 from sklearn.ensemble import RandomForestClassifier
-# Commented  out since it takes a long time to run Cross validation and started giving errors but ran once before that
 
-# param_grid = { 
-#     'n_estimators': [100, 200],
-#      criterion{“gini”, “entropy”, “log_loss”}
-#     'max_depth' : [4,5,6,None],
-# }
+#Cross val
+param_grid = {
+    "classifier__criterion":["gini","entropy"],
+    "classifier__n_estimators": [100, 200],
+    "classifier__max_depth" : [4,5,6,None],   
+    }
+pipelineForRF = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+            ("classifier", RandomForestClassifier(random_state = 42))]
+)
+from sklearn.model_selection import GridSearchCV
+grid2 = GridSearchCV(pipelineForRF, param_grid)
+grid2.fit(dfksi_train_X, dfksi_train_y)
+print(grid2.best_params_)
+print(grid2.best_score_)
+print(grid2.cv_results_)
 
-# pipelineForRF = Pipeline(
-    # steps=[("preprocessor", pre_processor), 
-    #        ("classifier", RandomForestClassifier(random_state = 42))]
-# )
-# from sklearn.model_selection import GridSearchCV
-# grid2 = GridSearchCV(pipelineForRF, param_grid)
-# grid2.fit(dfksi_train_X, dfksi_train_y)
-# print(grid2.best_params_)
 
-pipeline4 = Pipeline(
+#%%
+pipelineForRFoptimized = Pipeline(
     steps=[("preprocessor", pre_processor), 
            ("classifier", RandomForestClassifier(n_estimators = 100, random_state = 42,max_depth=None,criterion="gini"))]
 )
-
-#%%
-pipeline4.fit(dfksi_train_X, dfksi_train_y)
-print("Random forest model score: %.3f" % pipeline4.score(dfksi_test_X, dfksi_test_y))
+pipelineForRFoptimized.fit(dfksi_train_X, dfksi_train_y)
+print("Random forest model score: %.3f" % pipelineForRFoptimized.score(dfksi_test_X, dfksi_test_y))
 
 #%%
 #End of random forest
