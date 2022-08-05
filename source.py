@@ -529,19 +529,22 @@ from sklearn import metrics
 ConfusionMatrixDisplay.from_estimator(grid_result,dfksi_train_X,dfksi_train_y)
 ConfusionMatrixDisplay.from_predictions(y_pred,dfksi_test_y)
 
-fpr, tpr, thresholds = metrics.roc_curve(y_pred,dfksi_test_y, y_pred)
-roc_auc = metrics.auc(fpr, tpr)
-display = metrics.RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
-                               estimator_name='Neural Network')
-display.plot()
-plt.show()
+# fpr, tpr, thresholds = metrics.roc_curve(y_pred,dfksi_test_y, y_pred)
+# roc_auc = metrics.auc(fpr, tpr)
+# display = metrics.RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
+#                                estimator_name='Neural Network')
+# display.plot()
+# plt.show()
 # %%
 
 #We pickle the model i choose the random forest for now we can change it later with the best performing one
 
 import joblib
 joblib.dump(pipelineForRFoptimized, "randomforest.pkl")
-
+joblib.dump(grid_result,"NeuralNetwork.pkl")
+joblib.dump(pipeline,"LogReg.pkl")
+joblib.dump(pipeline3,"DecTree.pkl")
+joblib.dump(pipeline2,"SVM.pkl")
 
 
 #%%
