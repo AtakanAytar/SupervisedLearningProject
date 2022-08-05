@@ -449,12 +449,14 @@ print(grid2.cv_results_)
 
 
 #%%
+from sklearn.ensemble import RandomForestClassifier
 pipelineForRFoptimized = Pipeline(
     steps=[("preprocessor", pre_processor), 
            ("classifier", RandomForestClassifier(n_estimators = 100, random_state = 42,max_depth=None,criterion="gini"))]
 )
 pipelineForRFoptimized.fit(dfksi_train_X, dfksi_train_y)
 print("Random forest model score: %.3f" % pipelineForRFoptimized.score(dfksi_test_X, dfksi_test_y))
+
 
 #%%
 #End of random forest
@@ -534,3 +536,53 @@ display = metrics.RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
 display.plot()
 plt.show()
 # %%
+
+#We pickle the model i choose the random forest for now we can change it later with the best performing one
+
+import joblib
+joblib.dump(pipelineForRFoptimized, "randomforest.pkl")
+
+
+
+#%%
+from flask import Flask, request, render_template
+# Declare a Flask app
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def main():
+    
+    # If a form is submitted
+    if request.method == "POST":
+        
+        # Unpickle classifier
+        rf = joblib.load("randomforest.pkl")
+        
+
+
+        ###After this point needs to be adapted
+
+
+        # Get values through input bars
+        height = request.form.get("height")
+        weight = request.form.get("weight")
+        
+        # Put inputs to dataframe
+        X = pd.DataFrame([[height, weight]], columns = ["Height", "Weight"])
+        
+        # Get prediction
+        prediction = rf.predict(X)[0]
+        
+    else:
+        prediction = ""
+        
+    return render_template("website.html", output = prediction)
+
+# Running the app
+if __name__ == '__main__':
+    app.run(debug = True)
+
+
+
+
+#%%
