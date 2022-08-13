@@ -399,26 +399,66 @@ print("Decision Tree model score: %.3f" % pipeline3.score(dfksi_test_X, dfksi_te
 
 
 ## SUPPORT VECTOR
+##Adrian Posadas
 from sklearn.svm import SVC
 from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 #%%
 
-for k in ['linear', 'rbf', 'poly', 'sigmoid']:
-    pipeline2 = Pipeline(
-        steps=[("preprocessor", pre_processor), 
-               ("classifier", SVC(kernel=k, gamma='auto'))]
-    )
-    pipeline2.fit(dfksi_train_X, dfksi_train_y)
-    scores = cross_val_score(pipeline2, dfksi_train_X, dfksi_train_y, scoring='accuracy', cv=5)
-    print(k)
-    print ('Min:')
-    print (scores.min())
-    print ('Mean:')
-    print (scores.mean())
-    print ('Max:')
-    print (scores.max())
-    print("SVM model score: %.3f" % pipeline2.score(dfksi_test_X, dfksi_test_y))
-    print('\n')
+pipeline_svm = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", SVC(random_state=53))]
+)
+pipeline_svm.fit(dfksi_train_X, dfksi_train_y)
+#Define the grid search parameters
+param_grid_svm = [
+    {'classifier__kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
+    'classifier__C': [0.01,0.1, 1, 10, 100],
+    'classifier__gamma': [0.01, 0.03, 0.1, 0.3, 1.0, 3.0],
+    'classifier__degree':[2,3]},
+  ]
+param_grid_svm
+#Create a grid search object
+grid_search_svm = GridSearchCV(pipeline_svm, 
+                                  param_grid_svm, scoring='accuracy', 
+                                  refit = True, 
+                                  cv=3,
+                                  verbose=1)
+grid_search_svm
+#Fit your training data to the gird search object
+grid_search_svm.fit(dfksi_train_X, dfksi_train_y)
+#Print out the best parameters
+print(grid_search_svm.best_params_)
+print(grid_search_svm.best_estimator_)
+#Predict the test data using the fine-tuned model identified during grid search    
+best_model_svm = grid_search_svm.best_estimator_
+#{'classifier__C': 1, 'classifier__degree': 2, 'classifier__gamma': 0.3, 'classifier__kernel': 'poly'}
+print("SVM model score: %.3f" % pipeline_svm.score(dfksi_test_X, dfksi_test_y))
+scores = cross_val_score(best_model_svm, dfksi_train_X, dfksi_train_y, scoring='accuracy', cv=5)
+print ('Min:')
+print (scores.min())
+print ('Mean:')
+print (scores.mean())
+print ('Max:')
+print (scores.max())
+final_predictions = best_model_svm.predict(dfksi_test_X)
+print('Classification Report:')
+print(classification_report(dfksi_test_y, final_predictions))
+#Confusion Matrix
+print('Confusion Matrix:')
+print(confusion_matrix(dfksi_test_y, final_predictions)) 
+
+#Optimized SVM Model
+pipeline_svm_optimized = Pipeline(
+    steps=[("preprocessor", pre_processor), 
+           ("classifier", SVC(C=1, kernel='poly', degree=2, gamma=0.3, random_state=53))]
+)
+pipeline_svm_optimized.fit(dfksi_train_X, dfksi_train_y)
+print("OptimizedSVM model score: %.3f" % pipeline_svm_optimized.score(dfksi_test_X, dfksi_test_y))
+
+##END OF SVM
 
 #%%
 
@@ -544,7 +584,7 @@ joblib.dump(pipelineForRFoptimized, "randomforest.pkl")
 joblib.dump(grid_result,"NeuralNetwork.pkl")
 joblib.dump(pipeline,"LogReg.pkl")
 joblib.dump(pipeline3,"DecTree.pkl")
-joblib.dump(pipeline2,"SVM.pkl")
+joblib.dump(pipeline_svm_optimized,"SVM.pkl")
 #%%
 import json
 
