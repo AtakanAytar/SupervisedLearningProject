@@ -587,27 +587,22 @@ joblib.dump(pipeline3,"DecTree.pkl")
 joblib.dump(pipeline_svm_optimized,"SVM.pkl")
 #%%
 import json
-
-now_json = dfksi_train_X.iloc[2].to_json()
-
-out_file = open("mytest.json","w")
-json.dump(now_json,out_file)
-out_file.close()
-
-print(now_json)
-
-print(dfksi_train_X.shape)
-
-
+num = 3371
+now_json = dfksi_test_X.iloc[num].to_json()
+now_result = dfksi_test_y.iloc[num]
+# out_file = open("mytest.json","w")
+# json.dump(now_json,out_file)
+# out_file.close()
+print(now_json,now_result)
 # %%
 
 import joblib
 from sklearn import metrics
 forest = joblib.load("./models/randomforest.pkl")
-nnetwork = joblib.load("./modelsNeuralNetwork.pkl")
-logreg = joblib.load("./modelsLogReg.pkl")
-dectree = joblib.load("./modelsDecTree.pkl")
-fsvm = joblib.load("./modelsSVM.pkl")
+nnetwork = joblib.load("./models/NeuralNetwork.pkl")
+logreg = joblib.load("./models/LogReg.pkl")
+dectree = joblib.load("./models/DecTree.pkl")
+fsvm = joblib.load("./models/SVM.pkl")
 # %%
 import json
 from sklearn import metrics
@@ -619,9 +614,10 @@ def report_gen(model,name):
     out_file = open("./reports/{}.json".format(name),"w")
     json.dump(report,out_file)
     out_file.close()
-    
+
+report_gen(nnetwork,"nnetwork_results") 
+model_results = nnetwork.predict(dfksi_test_X)
 report_gen(forest,"forest_results")
-report_gen(nnetwork,"nnetwork_results")
 report_gen(logreg,"logreg_results")
 report_gen(dectree,"dectree_results")
 report_gen(fsvm,"fsvm_results")

@@ -1,1 +1,22 @@
-{"Fatal": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 460}, "Non-Fatal Injury": {"precision": 0.863582443653618, "recall": 1.0, "f1-score": 0.9267982176957352, "support": 2912}, "accuracy": 0.863582443653618, "macro avg": {"precision": 0.431791221826809, "recall": 0.5, "f1-score": 0.4633991088478676, "support": 3372}, "weighted avg": {"precision": 0.7457746369867544, "recall": 0.863582443653618, "f1-score": 0.8003666696115009, "support": 3372}}
+{
+  "Fatal": { "precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 460 },
+  "Non-Fatal Injury": {
+    "precision": 0.863582443653618,
+    "recall": 1.0,
+    "f1-score": 0.9267982176957352,
+    "support": 2912
+  },
+  "accuracy": 0.863582443653618,
+  "macro avg": {
+    "precision": 0.431791221826809,
+    "recall": 0.5,
+    "f1-score": 0.4633991088478676,
+    "support": 3372
+  },
+  "weighted avg": {
+    "precision": 0.7457746369867544,
+    "recall": 0.863582443653618,
+    "f1-score": 0.8003666696115009,
+    "support": 3372
+  }
+}
