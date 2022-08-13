@@ -600,3 +600,29 @@ print(dfksi_train_X.shape)
 
 
 # %%
+
+import joblib
+from sklearn import metrics
+forest = joblib.load("./models/randomforest.pkl")
+nnetwork = joblib.load("./modelsNeuralNetwork.pkl")
+logreg = joblib.load("./modelsLogReg.pkl")
+dectree = joblib.load("./modelsDecTree.pkl")
+fsvm = joblib.load("./modelsSVM.pkl")
+# %%
+import json
+from sklearn import metrics
+
+def report_gen(model,name):
+    model_results = model.predict(dfksi_test_X)
+    report = metrics.classification_report(dfksi_test_y,model_results,output_dict=True)
+    #print(report)
+    out_file = open("./reports/{}.json".format(name),"w")
+    json.dump(report,out_file)
+    out_file.close()
+    
+report_gen(forest,"forest_results")
+report_gen(nnetwork,"nnetwork_results")
+report_gen(logreg,"logreg_results")
+report_gen(dectree,"dectree_results")
+report_gen(fsvm,"fsvm_results")
+# %%
