@@ -545,7 +545,18 @@ joblib.dump(grid_result,"NeuralNetwork.pkl")
 joblib.dump(pipeline,"LogReg.pkl")
 joblib.dump(pipeline3,"DecTree.pkl")
 joblib.dump(pipeline2,"SVM.pkl")
-
-
 #%%
+import json
 
+now_json = dfksi_train_X.iloc[2].to_json()
+
+out_file = open("mytest.json","w")
+json.dump(now_json,out_file)
+out_file.close()
+
+print(now_json)
+
+
+
+
+# %%
