@@ -30,28 +30,33 @@ def main():
     ###return a json here   
     return jsonify(prediction)
 
+@app.route("/test", methods = ["GET","POST"])
+def test():
+    if request.method == "POST":
+        return request.form
+        
+
 #I think we should either have a route for each of these models or send something to Main fn
 @app.route("/nn", methods = ["GET","POST"])
 def get_nn():
     if request.method == "POST":
         # Unpickle classifier
         rf = joblib.load("./NeuralNetwork.pkl")
-        req_json = request.get_json(force=True)
-        req_json = jsonify(req_json)
-        #print(req_json)
+        #req_json = request.get_json(force=True)
+        #req_json = jsonify(req_json)
+        print(request.form)
         ###we have to get the values from the front end 
-
-        # Get values through input bars
-        # height = request.form.get("height")
-        # weight = request.form.get("weight")
         
-        # Put inputs to dataframe
-        
-        # X = pd.DataFrame([[height, weight]], columns = ["Height", "Weight"])
-        
+        test_json = {"HOUR":20,"TIME":2038,"STREET1":"FINCH Ave W","STREET2":"DUFFERIN St","DISTRICT":"North York","HOOD_ID":27,"TRAFFCTL":"No Control","VISIBILITY":"Rain","LIGHT":"Dark","RDSFCOND":"Wet","IMPACTYPE":"Pedestrian Collisions","INVTYPE":"Driver","INVAGE":"15 to 19","VEHTYPE":"Automobile, Station Wagon","LONGITUDE":-79.46989,"LATITUDE":43.768145}
         #json to dataframe
-        X= pd.DataFrame.from_dict(req_json)
-        #X = pd.read_json(req_json,orient='records')
+        columnss = ['HOUR', 'TIME', 'STREET1', 'STREET2', 'DISTRICT', 'HOOD_ID', 'TRAFFCTL',
+       'VISIBILITY', 'LIGHT', 'RDSFCOND', 'IMPACTYPE', 'INVTYPE', 'INVAGE',
+       'VEHTYPE', 'LONGITUDE', 'LATITUDE']
+        
+        #test_json = jsonify(test_json)
+        #X= pd.DataFrame(test_json.values(), columns = test_json.keys())
+        X = pd.read_json(test_json)
+        print(X)
         # Get prediction
         prediction = rf.predict(X)[0]
         

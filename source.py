@@ -596,7 +596,7 @@ out_file.close()
 
 print(now_json)
 
-
+print(dfksi_train_X.shape)
 
 
 # %%
