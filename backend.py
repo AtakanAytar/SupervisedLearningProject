@@ -33,7 +33,8 @@ def main():
 @app.route("/test", methods = ["GET","POST"])
 def test():
     if request.method == "POST":
-        return request.form
+        #print(jsonify(request.data))
+        return request.get_json()
         
 
 #I think we should either have a route for each of these models or send something to Main fn
@@ -42,9 +43,9 @@ def get_nn():
     if request.method == "POST":
         # Unpickle classifier
         rf = joblib.load("./NeuralNetwork.pkl")
-        #req_json = request.get_json(force=True)
+        req_json = request.get_json()
         #req_json = jsonify(req_json)
-        print(request.form)
+        
         ###we have to get the values from the front end 
         
         test_json = {"HOUR":20,"TIME":2038,"STREET1":"FINCH Ave W","STREET2":"DUFFERIN St","DISTRICT":"North York","HOOD_ID":27,"TRAFFCTL":"No Control","VISIBILITY":"Rain","LIGHT":"Dark","RDSFCOND":"Wet","IMPACTYPE":"Pedestrian Collisions","INVTYPE":"Driver","INVAGE":"15 to 19","VEHTYPE":"Automobile, Station Wagon","LONGITUDE":-79.46989,"LATITUDE":43.768145}
@@ -54,12 +55,12 @@ def get_nn():
        'VEHTYPE', 'LONGITUDE', 'LATITUDE']
         
         #test_json = jsonify(test_json)
-        #X= pd.DataFrame(test_json.values(), columns = test_json.keys())
-        X = pd.read_json(test_json)
+        X= pd.DataFrame.from_dict(req_json)
+        #X = pd.DataFrame.read_json(req_json)
         print(X)
         # Get prediction
         prediction = rf.predict(X)[0]
-        
+        print(type(req_json))
     else:
         prediction = ""
     ###return a json here   
