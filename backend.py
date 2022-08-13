@@ -39,12 +39,14 @@ def test():
 #I think we should either have a route for each of these models or send something to Main fn
 @app.route("/nn", methods = ["GET","POST"])
 def get_nn():
+    prediction = {}
+    
     if request.method == "POST":
         # Unpickle classifier
-        rf = joblib.load("./NeuralNetwork.pkl")
+        #rf = joblib.load("./NeuralNetwork.pkl")
         #req_json = request.get_json(force=True)
         #req_json = jsonify(req_json)
-        print(request.form)
+        #print(request.form)
         ###we have to get the values from the front end 
         
         test_json = {"HOUR":20,"TIME":2038,"STREET1":"FINCH Ave W","STREET2":"DUFFERIN St","DISTRICT":"North York","HOOD_ID":27,"TRAFFCTL":"No Control","VISIBILITY":"Rain","LIGHT":"Dark","RDSFCOND":"Wet","IMPACTYPE":"Pedestrian Collisions","INVTYPE":"Driver","INVAGE":"15 to 19","VEHTYPE":"Automobile, Station Wagon","LONGITUDE":-79.46989,"LATITUDE":43.768145}
@@ -52,13 +54,22 @@ def get_nn():
         columnss = ['HOUR', 'TIME', 'STREET1', 'STREET2', 'DISTRICT', 'HOOD_ID', 'TRAFFCTL',
        'VISIBILITY', 'LIGHT', 'RDSFCOND', 'IMPACTYPE', 'INVTYPE', 'INVAGE',
        'VEHTYPE', 'LONGITUDE', 'LATITUDE']
+
+        x_dict = {}
+        for ikey in test_json:
+            x_dict[ikey] = pd.Series([test_json[ikey]])
+
+        X = pd.DataFrame(x_dict)
         
         #test_json = jsonify(test_json)
         #X= pd.DataFrame(test_json.values(), columns = test_json.keys())
-        X = pd.read_json(test_json)
+        # X = pd.read_json(test_json)
         print(X)
+    
+
+        # return jsonify(x_dict)
         # Get prediction
-        prediction = rf.predict(X)[0]
+        #prediction = rf.predict(X)[0]
         
     else:
         prediction = ""
