@@ -331,14 +331,9 @@ pre_processor = ColumnTransformer(
     ]
 )
 pre_processor
-
 #%%
 
-# dfksi_main = full_pipeline.fit_transform(housing)
-
-
-#%%
-
+######################
 ## BUILDING THE MODELS
 ######################
 
@@ -348,15 +343,41 @@ pre_processor
 from sklearn.linear_model import LogisticRegression
 
 # pipeline including the pre-processor
-pipeline = Pipeline(
-    steps=[("preprocessor", pre_processor), ("classifier", LogisticRegression(max_iter=200))]
+LR_pipeline = Pipeline(
+    steps=[
+        ("preprocessor", pre_processor), 
+        ("classifier", LogisticRegression(max_iter=500))
+    ]
 )
 
 #%%
 # fitting the model
-pipeline.fit(dfksi_train_X, dfksi_train_y)
+LR_pipeline.fit(dfksi_train_X, dfksi_train_y)
 # printing initial model score
-print("model score: %.3f" % pipeline.score(dfksi_test_X, dfksi_test_y))
+print("model score with test data: %.3f" % LR_pipeline.score(dfksi_test_X, dfksi_test_y))
+
+# %%
+## fine tuning with the grid search cross validation
+from sklearn.model_selection import GridSearchCV
+LR_grid_params = [
+    {'classifier' : [LogisticRegression()],
+    'classifier__penalty' : ['l1', 'l2'],
+    'classifier__C' : np.logspace(-4, 4, 20),
+    'classifier__solver' : ['liblinear']}
+]
+LR_grid_search = GridSearchCV(LR_pipeline, param_grid = LR_grid_params, cv = 5)
+LR_grid_search.fit(dfksi_train_X, dfksi_train_y)
+
+# checking the scores
+print("Best Score:", LR_grid_search.best_score_)
+print("Best Params:", LR_grid_search.best_params_)
+LR_grid_search.best_estimator_
+
+#%%
+LR_pipeline_final = LR_grid_search.best_estimator_
+LR_pipeline_final.fit(dfksi_train_X, dfksi_train_y)
+print("Final Score model score: %.3f" % LR_pipeline_final.score(dfksi_test_X, dfksi_test_y))
+
 
 #%%
 ## DECISION TREE 
@@ -582,7 +603,7 @@ ConfusionMatrixDisplay.from_predictions(y_pred,dfksi_test_y)
 import joblib
 joblib.dump(pipelineForRFoptimized, "randomforest.pkl")
 joblib.dump(grid_result,"NeuralNetwork.pkl")
-joblib.dump(pipeline,"LogReg.pkl")
+joblib.dump(LR_pipeline_final,"LogReg.pkl")
 joblib.dump(pipeline3,"DecTree.pkl")
 joblib.dump(pipeline_svm_optimized,"SVM.pkl")
 #%%
