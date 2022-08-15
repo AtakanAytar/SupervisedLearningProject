@@ -8,6 +8,59 @@ import joblib
 # # Declare a Flask app
 app = Flask(__name__)
 
+model_pkl_map = {
+    'logistic': ['./models/LogReg.pkl', "./reports/logreg_results.json"],
+    'forest': ['./models/randomforest.pkl', "./reports/forest_results.json"], 
+    'nueral': ['./models/NeuralNetwork.pkl', "./reports/nnetwork_results.json"],
+    'decision': ['./models/DecTree.pkl', "./reports/dectree_results.json"],
+    'svm': ['./models/SVM.pkl', "./reports/fsvm_results.json"]
+}
+
+
+@app.route('/api', methods=['GET', 'POST'])
+def api_route():
+    response = {}
+
+    if request.method == "POST":
+        # get/validate input
+        input = request.get_json()
+        if not input['model'] or not input['data']:
+            raise Exception("Invalid request")
+
+        # extract the model name and the test data
+        # and covert into dataframe
+        model_name = input['model']
+        test_data = input['data']
+
+        test_data_dict = {}
+        for key in test_data:
+            test_data_dict[key] = pd.Series([test_data[key]])
+        X = pd.DataFrame(test_data_dict)
+
+        # load/deserialize the model from the pkl file
+        if model_name not in model_pkl_map:
+            raise Exception("Unknown model name: " + model_name)
+
+        plk_filename = model_pkl_map[model_name][0]
+        classifier = joblib.load(plk_filename)
+        if not classifier:
+            raise Exception("Unable to load model with model name: " + model_name)
+
+        # predict using the model
+        prediction = classifier.predict(X)[0]
+        # load the score for the model
+        score = json.load(open(model_pkl_map[model_name][1],"r"))
+        
+        response['prediction'] = prediction
+        response['score'] = score['weighted avg']
+        response['score']['accuracy'] = score['accuracy']
+    else:
+        response['message'] = "Please send POST request to run the model"
+
+    # return the result back to client
+    return jsonify(response)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
     prediction = {}
