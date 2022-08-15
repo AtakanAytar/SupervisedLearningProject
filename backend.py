@@ -85,7 +85,7 @@ def main():
 
 @app.route('/forest', methods=['GET', 'POST'])
 def get_forest():
-    prediction = {}~
+    prediction = {}
     # If a form is submitted
     if request.method == "POST":
         
