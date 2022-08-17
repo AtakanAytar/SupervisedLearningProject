@@ -580,11 +580,11 @@ ConfusionMatrixDisplay.from_predictions(y_pred,dfksi_test_y)
 #We pickle the model i choose the random forest for now we can change it later with the best performing one
 
 import joblib
-joblib.dump(pipelineForRFoptimized, "randomforest.pkl")
-joblib.dump(grid_result,"NeuralNetwork.pkl")
-joblib.dump(pipeline,"LogReg.pkl")
-joblib.dump(pipeline3,"DecTree.pkl")
-joblib.dump(pipeline_svm_optimized,"SVM.pkl")
+joblib.dump(pipelineForRFoptimized, "./models/randomforest.pkl")
+joblib.dump(grid_result,"./models/NeuralNetwork.pkl")
+joblib.dump(pipeline,"./models/LogReg.pkl")
+joblib.dump(pipeline3,"./models/DecTree.pkl")
+joblib.dump(pipeline_svm_optimized,"./models/SVM.pkl")
 #%%
 import json
 num = 3371
