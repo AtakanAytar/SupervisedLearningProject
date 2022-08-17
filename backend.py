@@ -3,10 +3,11 @@ from flask import Flask, request, render_template, jsonify
 import pandas as pd
 import json
 import joblib
-
+from flask_cors import CORS, cross_origin
 
 # # Declare a Flask app
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 model_pkl_map = {
     'logistic': ['./models/LogReg.pkl', "./reports/logreg_results.json"],
@@ -18,6 +19,7 @@ model_pkl_map = {
 
 
 @app.route('/api', methods=['GET', 'POST'])
+@cross_origin()
 def api_route():
     response = {}
 
