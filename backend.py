@@ -7,14 +7,7 @@ from flask_cors import CORS, cross_origin
 
 # # Declare a Flask app
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
-app.config['CORS_HEADERS'] = 'Content-Type'
-
 cors = CORS(app, resources={r"/api": {"origins": "http://127.0.0.1:5173"}})
-
-
-CORS(app, resources={r"/api": {"origins": "http://127.0.0.1:5173"}})
 
 model_pkl_map = {
     'logistic': ['./models/LogReg.pkl', "./reports/logreg_results.json"],
@@ -23,7 +16,6 @@ model_pkl_map = {
     'decision': ['./models/DecTree.pkl', "./reports/dectree_results.json"],
     'svm': ['./models/SVM.pkl', "./reports/fsvm_results.json"]
 }
-
 
 @app.route('/api', methods=['GET', 'POST'])
 @cross_origin(origin='*',headers=['Content- Type','Authorization','access-control-allow-origin'])
