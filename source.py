@@ -549,11 +549,11 @@ scoremodel(rnd_result)
 #%%
 param_grid = {
             'mlpc__max_iter': [600],
-            'mlpc__hidden_layer_sizes': [(8,6,1),(4,2,1)],
+            'mlpc__hidden_layer_sizes': [(8,4,2),(4,2,1)],
             'mlpc__activation': ['tanh'],
             'mlpc__solver': ['adam'],
             'mlpc__alpha': [0.001, 0.01],
-            'mlpc__learning_rate': ['constant','adaptive'],
+            'mlpc__learning_rate': ['adaptive'],
 }
 
 #5 minutes
@@ -614,9 +614,23 @@ def report_gen(model,name):
     out_file = open("./reports/{}.json".format(name),"w")
     json.dump(report,out_file)
     out_file.close()
+#model_results = nnetwork.predict(dfksi_test_X)
+report_gen(nnetwork,"nnetwork_results") 
+report_gen(forest,"forest_results")
+report_gen(logreg,"logreg_results")
+report_gen(dectree,"dectree_results")
+report_gen(fsvm,"fsvm_results")
+# %%
+import json
+from sklearn import metrics
+def report_gen(model,name):
+    model_results = model.predict(dfksi_test_X)
+    report = metrics.classification_report(dfksi_test_y,model_results)
+    print(report)
+    matrix = metrics.confusion_matrix(dfksi_test_y,model_results)
+    print(matrix)
 
 report_gen(nnetwork,"nnetwork_results") 
-model_results = nnetwork.predict(dfksi_test_X)
 report_gen(forest,"forest_results")
 report_gen(logreg,"logreg_results")
 report_gen(dectree,"dectree_results")
