@@ -206,6 +206,8 @@ pd.crosstab(df_ksi["INJURY"], df_ksi["ACCLASS"])
 #####################
 
 df_ksi.columns.values
+
+
 #%%
 
 # initial feature selection (tentative)
@@ -624,9 +626,13 @@ joblib.dump(pipeline3,"./models/DecTree.pkl")
 joblib.dump(pipeline_svm_optimized,"./models/SVM.pkl")
 #%%
 import json
-num = 3371
-now_json = dfksi_test_X.iloc[num].to_json()
-now_result = dfksi_test_y.iloc[num]
+inum = dfksi_test_y.index[dfksi_test_y == "Fatal"]
+#print(inum)
+num = dfksi_test_y.loc[dfksi_test_y == "Non-Fatal Injury"]
+
+number = 3371
+now_json = dfksi_test_X.iloc[number].to_json()
+now_result = dfksi_test_y.iloc[number]
 # out_file = open("mytest.json","w")
 # json.dump(now_json,out_file)
 # out_file.close()
@@ -657,6 +663,7 @@ report_gen(forest,"forest_results")
 report_gen(logreg,"logreg_results")
 report_gen(dectree,"dectree_results")
 report_gen(fsvm,"fsvm_results")
+
 # %%
 import json
 from sklearn import metrics
@@ -673,7 +680,19 @@ report_gen(logreg,"logreg_results")
 report_gen(dectree,"dectree_results")
 report_gen(fsvm,"fsvm_results")
 # %%
+def scoremodel(model):
+    print("Training Accuracy: " , model.score(dfksi_train_X,dfksi_train_y))
+    print("Test Accuracy: " , model.score(dfksi_test_X,dfksi_test_y))
+    y_pred = model.predict(dfksi_test_X)
+    print("Confusion Matrix: \n" , confusion_matrix(dfksi_test_y, y_pred))
+    #print("Best Parameters: " ,model.best_params_)
+    #print("Best Score: " ,model.best_score_)
 
-scoremodel(nnetwork)
+models = [ (nnetwork, "NN"), (forest,"forest"), (logreg,"LR"), (dectree,"DecTree"),(fsvm,"SVM")]
+for (x,y) in models:
+    print(y)
+    scoremodel(x)
+
 #nnetwork.feature_importances_
-nnetwork.best_estimator_.named_steps["mlpc"].feature_importances_
+#nnetwork.best_estimator_.named_steps["mlpc"].feature_importances_
+# %%
