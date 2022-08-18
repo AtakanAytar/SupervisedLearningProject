@@ -636,3 +636,7 @@ report_gen(logreg,"logreg_results")
 report_gen(dectree,"dectree_results")
 report_gen(fsvm,"fsvm_results")
 # %%
+
+scoremodel(nnetwork)
+#nnetwork.feature_importances_
+nnetwork.best_estimator_.named_steps["mlpc"].feature_importances_
